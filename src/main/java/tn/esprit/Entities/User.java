@@ -1,5 +1,6 @@
 package tn.esprit.Entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,7 +30,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Status invitationStatus = Status.BEING_PROCESSED;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "employee")
+    @JsonManagedReference(value = "employee")
     private List<MissionAffectation> missionAffectations;
     @OneToMany(cascade = CascadeType.ALL, mappedBy ="company")
+    @JsonManagedReference(value = "company")
     private List<Mission> missions;
+    
 }
