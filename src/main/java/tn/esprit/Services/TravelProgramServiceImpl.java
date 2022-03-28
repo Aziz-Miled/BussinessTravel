@@ -63,6 +63,7 @@ public class TravelProgramServiceImpl implements TravelProgramService {
             else{
                 for (Mission mTwo : list) {
                     if (mOne.equals(mTwo)){
+                        log.info("Meme mission");
                         m1.add(mOne);
                         checkList.add(mOne);
                     }
@@ -71,6 +72,11 @@ public class TravelProgramServiceImpl implements TravelProgramService {
                         checkList.add(mTwo);
                     }
                 }
+
+                for ( Mission m : m1){
+                    log.info("mission id {}", m.getId());
+                }
+                log.info("***************************************");
 
                 // traitement matching de voyage
 
@@ -82,32 +88,63 @@ public class TravelProgramServiceImpl implements TravelProgramService {
                     prg.setMissions(new ArrayList<>(m1));
                     setPrg.add(prg);
                     m1.clear();
+
+                    log.info("check");
+                    log.info("***************************************");
+                    log.info("prg if m1.size() = 1");
+                    log.info("prg min date : {}", prg.getStartDate());
+                    log.info("prg max date : {}", prg.getEndDate());
+                    log.info("prg destination : {}", prg.getDestination());
+                    log.info("prg missions : ");
+                    for(Mission m : prg.getMissions()){
+                        log.info("mission id : {}", m.getId());
+                    }
                     continue;
                 }
 
                 Collections.sort(m1);
 
-                minDate = m1.stream().findFirst().get().getStartDate();
+                log.info("***************************************");
+                for ( Mission m : m1){
+                    log.info("mission id {}", m.getId());
+                }
+
                 maxDate = m1.stream().findFirst().get().getEndDate();
 
+                log.info("***************************************");
+                log.info("min date : {}", maxDate);
+
+
                 for (int l = 0; l < m1.size() - 1 ; l++) {
-
+                    log.info("***************************************");
+                    log.info("Entering missSet loop");
                     missSet.add(m1.get(l));
-
-                    if (m1.get(l + 1).getStartDate().compareTo(minDate) < 0) {
-                        minDate = m1.get(l + 1).getStartDate();
+                    log.info("***************************************");
+                    for ( Mission m : missSet){
+                        log.info("missSet mission id: {}", m.getId());
                     }
+
 
                     if (m1.get(l + 1).getEndDate().compareTo(maxDate) > 0) {
                         maxDate = m1.get(l + 1).getEndDate();
+                        log.info("***************************************");
+                        log.info("new max date {}",maxDate);
+                    }else{
+                        log.info("***************************************");
+                        log.info("min date unmodified {}",maxDate);
                     }
 
                     if ((m1.get(l).getEndDate().compareTo(m1.get(l + 1).getStartDate()) > 0)
-                            || maxDate.compareTo(m1.get(l + 1).getStartDate()) > 0) {
+                            || maxDate.compareTo(m1.get(l + 1).getStartDate()) < 0) {
                         missSet.add(m1.get(l));
                         missSet.add(m1.get(l + 1));
                         cpt++;
-
+                        log.info("***************************************");
+                        log.info("compteur : {}", cpt);
+                        log.info("***************************************");
+                        for ( Mission m : missSet){
+                            log.info("modif missSet mission id: {}", m.getId());
+                        }
                     } else {
                         test = false;
                     }
@@ -119,13 +156,22 @@ public class TravelProgramServiceImpl implements TravelProgramService {
                         prg.setStartDate(m1.get(l).getStartDate());
                         prg.setDestination(m1.get(l).getDestination());
                         missList = new ArrayList<>(missSet);
-                        prg.setMissions(missList);
+                        prg.setMissions(new ArrayList<>(missList));
                         setPrg.add(prg);
                         missSet.clear();
                         missList.clear();
                         test = true;
                         cpt = 0;
 
+                        log.info("***************************************");
+                        log.info("prg if test false et cpt = 0");
+                        log.info("prg min date : {}", prg.getStartDate());
+                        log.info("prg max date : {}", prg.getEndDate());
+                        log.info("prg destination : {}", prg.getDestination());
+                        log.info("prg missions : ");
+                        for(Mission m : prg.getMissions()){
+                            log.info("mission id : {}", m.getId());
+                        }
 
                         if (l == m1.size()-2){
                             TravelProgram tPrg = new TravelProgram();
@@ -140,13 +186,23 @@ public class TravelProgramServiceImpl implements TravelProgramService {
                             test = true;
                             cpt = 0;
 
+                            log.info("***************************************");
+                            log.info("prg if test false et cpt = 0 et l = m1.size()-2");
+                            log.info("prg min date : {}", tPrg.getStartDate());
+                            log.info("prg max date : {}", tPrg.getEndDate());
+                            log.info("prg destination : {}", tPrg.getDestination());
+                            log.info("prg missions : ");
+                            for(Mission m : tPrg.getMissions()){
+                                log.info("mission id : {}", m.getId());
+                            }
+
                         }
                     }
                     else if (test == false && cpt > 0) {
 
                         TravelProgram prg = new TravelProgram();
                         prg.setEndDate(maxDate);
-                        prg.setStartDate(minDate);
+                        prg.setStartDate(m1.get(l-cpt+1).getStartDate());
                         prg.setDestination(missSet.stream().findFirst().get().getDestination());
                         missList = new ArrayList<>(missSet);
                         prg.setMissions(new ArrayList<>(missList));
@@ -156,6 +212,15 @@ public class TravelProgramServiceImpl implements TravelProgramService {
                         missList.clear();
                         missSet.clear();
 
+                        log.info("***************************************");
+                        log.info("prg if test false et cpt > 0");
+                        log.info("prg min date : {}", prg.getStartDate());
+                        log.info("prg max date : {}", prg.getEndDate());
+                        log.info("prg destination : {}", prg.getDestination());
+                        log.info("prg missions : ");
+                        for(Mission m : prg.getMissions()){
+                            log.info("mission id : {}", m.getId());
+                        }
 
                         if (l == m1.size()-2){
 
@@ -170,14 +235,23 @@ public class TravelProgramServiceImpl implements TravelProgramService {
                             missList.clear();
                             test = true;
                             cpt = 0;
-
+                            log.info("***************************************");
+                            log.info("prg if test false et cpt > 0 et l = m1.size()-1");
+                            log.info("prg min date : {}", tPrg.getStartDate());
+                            log.info("prg max date : {}", tPrg.getEndDate());
+                            log.info("prg destination : {}", tPrg.getDestination());
+                            log.info("prg missions : ");
+                            for(Mission m : tPrg.getMissions()){
+                                log.info("mission id : {}", m.getId());
+                            }
                         }
 
                     }
                     else if ( test ==  true && l == m1.size()-2 ){
+                        log.info("enter !!!!!");
                         TravelProgram prg = new TravelProgram();
                         prg.setEndDate(maxDate);
-                        prg.setStartDate(minDate);
+                        prg.setStartDate(m1.get(l-cpt+1).getStartDate());
                         prg.setDestination(missSet.stream().findFirst().get().getDestination());
                         missList = new ArrayList<>(missSet);
                         prg.setMissions(new ArrayList<>(missList));
@@ -186,12 +260,31 @@ public class TravelProgramServiceImpl implements TravelProgramService {
                         cpt = 0;
                         missList.clear();
                         missSet.clear();
+                        log.info("***************************************");
+                        log.info("prg if test true et l = m1.size()-2");
+                        log.info("prg min date : {}", prg.getStartDate());
+                        log.info("prg max date : {}", prg.getEndDate());
+                        log.info("prg destination : {}", prg.getDestination());
+                        log.info("prg missions : ");
+                        for (Mission m : prg.getMissions()){
+                            log.info("id {}", m.getId());
+                        }
 
                     }
 
                 }
 
+                log.info("***************************************");
+                log.info("out of missSet loop");
+                for (Mission m : m1){
+                    log.info("mission avec id : {}", m.getId());
+                }
+
                 m1.clear();
+
+                log.info("***************************************");
+                log.info("out of missSet loop and after clear");
+
 
             }
 
@@ -248,7 +341,7 @@ public class TravelProgramServiceImpl implements TravelProgramService {
                     for ( Mission m : validMissions ) {
                         emailSenderService.sendEmail(m.getCompany().getEmail(),
                                 "Reception of validation of your travel program",
-                                "Dear "+m.getCompany().getFirstName()+",\n" +
+                                "Dear "+m.getCompany().getFirstName()+" "+m.getCompany().getLastName()+",\n" +
                                         "The travel program that you have validated is ready and set to go !\n"+
                                         "Please refer to the main application interface for more informations \n"+
                                         "Thank you.\n"+
@@ -271,15 +364,6 @@ public class TravelProgramServiceImpl implements TravelProgramService {
                         );
                     }
                 }
-
-                for(Mission mission : invalidMissions){
-                    if (travelProgram.getMissions().contains(mission)){
-                        travelProgram.getMissions().remove(mission);
-                        mission.setTravelProgram(null);
-                        missionService.updateMission(mission);
-                    }
-                }
-                updateTravelProgram(travelProgram);
 
                 validMissions.clear();
                 invalidMissions.clear();
