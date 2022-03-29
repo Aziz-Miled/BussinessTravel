@@ -327,7 +327,7 @@ public class TravelProgramServiceImpl implements TravelProgramService {
             max = travelProgram.getMissions().size();
             if ( travelProgram.getTravelProgramStatus() == Status.BEING_PROCESSED){
                 for(Mission mission : travelProgram.getMissions()){
-                    if (mission.getMissionStatus()==Status.VALID && i<=3 && i <= max ){
+                    if (mission.getMissionStatus()==Status.VALID && i<3 && i <= max ){
                         i++;
                         validMissions.add(mission);
                     }
